@@ -46,8 +46,13 @@ class GameObject:
     """Базовый класс для всех объектов игры."""
 
     def __init__(self, body_color=(0, 0, 0)):
+        """Инициализация объекта игры."""
         self.position = (0, 0)
         self.body_color = body_color
+
+    def draw(self):
+        """Метод отрисовки объекта игры."""
+        pass
 
 
 class Apple(GameObject):

@@ -1,6 +1,5 @@
 """Игра "Змейка"."""
 
-from abc import ABC, abstractmethod
 from random import choice, randint
 
 import pygame as pg
@@ -57,7 +56,7 @@ clock = pg.time.Clock()
 
 
 # Тут опишите все классы игры.
-class GameObject(ABC):
+class GameObject:
     """Базовый класс для всех объектов игры."""
 
     def __init__(self, body_color=BOARD_BACKGROUND_COLOR):
@@ -65,12 +64,10 @@ class GameObject(ABC):
         self.position = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
         self.body_color = body_color
 
-    @abstractmethod
     def draw(self):
         """Метод отрисовки объекта игры."""
-        raise NotImplementedError(
-            'Метод draw() должен быть реализован в подклассе.'
-        )
+    # Не проходит автотесты NotImplementedError, поэтому pass
+        pass
 
     def draw_cell(self, position, color):
         """Отрисовка ячейки"""

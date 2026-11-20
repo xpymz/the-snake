@@ -1,5 +1,6 @@
 """Игра "Змейка"."""
 
+from abc import ABC, abstractmethod
 from random import choice, randint
 
 import pygame as pg
@@ -56,7 +57,7 @@ clock = pg.time.Clock()
 
 
 # Тут опишите все классы игры.
-class GameObject:
+class GameObject(ABC):
     """Базовый класс для всех объектов игры."""
 
     def __init__(self, body_color=BOARD_BACKGROUND_COLOR):
@@ -64,6 +65,7 @@ class GameObject:
         self.position = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
         self.body_color = body_color
 
+    @abstractmethod
     def draw(self):
         """Метод отрисовки объекта игры."""
         raise NotImplementedError(
@@ -80,14 +82,13 @@ class GameObject:
 class Apple(GameObject):
     """Класс яблока."""
 
-    def __init__(self, occupied_positions=None):
+    def __init__(self, occupied_positions=[]):
         """Инициализация яблока."""
         super().__init__(APPLE_COLOR)
-        self.randomize_position(occupied_positions)
+        self.randomize_position(list(occupied_positions))
 
-    def randomize_position(self, occupied_positions=None):
+    def randomize_position(self, occupied_positions=[]):
         """Случайная генерация спавна яблока без совпадений."""
-        occupied_positions = occupied_positions or []
         while True:
             self.position = (
                 randint(0, GRID_WIDTH - 1) * GRID_SIZE,
@@ -108,6 +109,7 @@ class Snake(GameObject):
         """Инициализация змейки."""
         super().__init__(SNAKE_COLOR)
         self.reset()
+        self.direction = RIGHT
 
     def get_head_position(self):
         """Получение позиции головы змейки."""
@@ -117,7 +119,6 @@ class Snake(GameObject):
         """Сброс змейки в начальное состояние."""
         self.length = 1
         self.positions = [(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)]
-        self.direction = RIGHT
         self.direction = choice((UP, DOWN, LEFT, RIGHT))
         self.last = None
 
@@ -130,12 +131,12 @@ class Snake(GameObject):
         head_x, head_y = self.get_head_position()
         direction_x, direction_y = self.direction
 
-        new_head = (
+        self.position = (
             (head_x + direction_x * GRID_SIZE) % SCREEN_WIDTH,
             (head_y + direction_y * GRID_SIZE) % SCREEN_HEIGHT
         )
 
-        self.positions.insert(0, new_head)
+        self.positions.insert(0, self.position)
 
         if len(self.positions) > self.length:
             self.last = self.positions.pop()
@@ -195,11 +196,10 @@ def main():
             snake.length += 1
             apple.randomize_position(snake.positions)
 
-        if snake.get_head_position() in snake.positions[1:]:
+        elif snake.get_head_position() in snake.positions[1:]:
             snake.reset()
             screen.fill(BOARD_BACKGROUND_COLOR)
             apple.randomize_position(snake.positions)
-            continue
 
         # Отрисовка
         snake.draw()

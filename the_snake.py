@@ -82,13 +82,12 @@ class GameObject(ABC):
 class Apple(GameObject):
     """Класс яблока."""
 
-    # occupied_positions=[], как просили в ревью. Список не меняем, поэтому ок
-    def __init__(self, occupied_positions=[]):  # noqa: B006
-        """Инициализация яблока."""
+    # Используется пустой кортеж, чтобы избежать B006 (mutable default)
+    def __init__(self, occupied_positions=()):
         super().__init__(APPLE_COLOR)
         self.randomize_position(list(occupied_positions))
 
-    def randomize_position(self, occupied_positions=[]):  # noqa: B006
+    def randomize_position(self, occupied_positions=()):
         """Случайная генерация спавна яблока без совпадений."""
         while True:
             self.position = (

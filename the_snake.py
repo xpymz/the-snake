@@ -66,8 +66,9 @@ class GameObject:
 
     def draw(self):
         """Метод отрисовки объекта игры."""
-    # Не проходит автотесты NotImplementedError, поэтому pass
-        pass
+        raise NotImplementedError(
+            'Метод draw() должен быть реализован в подклассе.'
+        )
 
     def draw_cell(self, position, color):
         """Отрисовка ячейки"""
@@ -79,13 +80,14 @@ class GameObject:
 class Apple(GameObject):
     """Класс яблока."""
 
-    # Используется пустой кортеж, чтобы избежать B006 (mutable default)
-    def __init__(self, occupied_positions=()):
+    def __init__(self, occupied_positions=None):
         super().__init__(APPLE_COLOR)
-        self.randomize_position(list(occupied_positions))
+        self.randomize_position(occupied_positions)
 
-    def randomize_position(self, occupied_positions=()):
+    def randomize_position(self, occupied_positions=None):
         """Случайная генерация спавна яблока без совпадений."""
+        if occupied_positions is None:
+            occupied_positions = []
         while True:
             self.position = (
                 randint(0, GRID_WIDTH - 1) * GRID_SIZE,
@@ -193,7 +195,10 @@ def main():
             snake.length += 1
             apple.randomize_position(snake.positions)
 
-        elif snake.get_head_position() in snake.positions[1:]:
+        elif (
+            snake.length >= 4
+            and snake.get_head_position() in snake.positions[1:]
+        ):
             snake.reset()
             screen.fill(BOARD_BACKGROUND_COLOR)
             apple.randomize_position(snake.positions)
